@@ -1,0 +1,6 @@
+@YoutubeCompanion.API_HostAddress = http://localhost:5234
+
+GET {{YoutubeCompanion.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

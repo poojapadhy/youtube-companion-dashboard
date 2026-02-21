@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="YoutubeCompanion.API/YoutubeCompanion.API.csproj" />
+  <Project Path="YoutubeCompanion.Application/YoutubeCompanion.Application.csproj" />
+  <Project Path="YoutubeCompanion.Domain/YoutubeCompanion.Domain.csproj" />
+  <Project Path="YoutubeCompanion.Infrastructure/YoutubeCompanion.Infrastructure.csproj" />
+</Solution>
