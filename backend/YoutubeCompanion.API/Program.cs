@@ -72,6 +72,19 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 });
 
+// Config sanity check (non-secret): shows redirect URI and whether keys are present
+app.MapGet("/api/config-check", (IConfiguration config) =>
+{
+    return new
+    {
+        youtubeRedirect = config["YouTube:RedirectUri"],
+        youtubeClientIdSet = !string.IsNullOrWhiteSpace(config["YouTube:ClientId"]),
+        youtubeClientSecretSet = !string.IsNullOrWhiteSpace(config["YouTube:ClientSecret"]),
+        mongoConnectionSet = !string.IsNullOrWhiteSpace(config["MongoDb:ConnectionString"]),
+        groqApiKeySet = !string.IsNullOrWhiteSpace(config["Groq:ApiKey"])
+    };
+});
+
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
