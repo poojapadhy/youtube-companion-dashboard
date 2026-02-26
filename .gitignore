@@ -8,3 +8,6 @@
 
 # Env
 .env
+
+# Settings
+backend/YoutubeCompanion.API/appsettings.Development.json

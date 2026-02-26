@@ -36,3 +36,55 @@
     transform: rotate(360deg);
   }
 }
+
+/* Dashboard styles */
+.app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.app-top {
+  background: #111827;
+  color: white;
+  text-align: center;
+}
+.app-header{
+  margin: 10px;
+}
+.app-main {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  flex: 1;
+}
+.video-pane {
+  flex: 2;
+}
+.side-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.video-player iframe {
+  border-radius: 6px;
+  background: #000;
+}
+.video-meta {
+  margin-top: 12px;
+}
+.stats span { margin-right: 12px; }
+.comments-root, .notes-root {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.add-comment input, .add-comment button, .reply-box input {
+  padding: 8px;
+  margin-right: 6px;
+}
+.add-note textarea { width: 100%; height: 60px; margin-bottom: 8px; }
+.note-item { border-top: 1px solid #eee; padding: 8px 0; }
+.muted { color: #666; padding: 8px 0; }
+
