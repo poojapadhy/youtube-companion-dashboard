@@ -27,7 +27,8 @@ export default function Notes() {
       const res = await fetch(`${API_BASE_URL}/api/notes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
+        credentials: "include"
       });
       const json = await res.json();
       setNotes([json, ...notes]);
