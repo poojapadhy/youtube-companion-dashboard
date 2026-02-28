@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // 🔹 ADD THIS (CRITICAL)
 builder.Services.AddControllers();
 
-builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // MongoDB settings
