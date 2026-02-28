@@ -29,7 +29,8 @@ builder.Services.AddCors(options =>
     {
         policy
             .WithOrigins(
-                "http://localhost:3000"             // local React
+                "http://localhost:3000", //local React
+                "https://youtube-companion-dashboard-five.vercel.app"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
