@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using YoutubeCompanion.Infrastructure.AI;
 using YoutubeCompanion.Infrastructure.Mongo;
 using YoutubeCompanion.Infrastructure.Settings;
@@ -38,7 +39,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("ENABLE_SWAGGER") == "true")
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -46,6 +47,11 @@ if (app.Environment.IsDevelopment())
 
 // CORS MUST come before UseHttpsRedirection and routing
 app.UseCors("FrontendPolicy");
+
+app.UseForwardedHeaders(new 
+    ForwardedHeadersOptions { 
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto 
+    });
 
 // HTTPS
 app.UseHttpsRedirection();
