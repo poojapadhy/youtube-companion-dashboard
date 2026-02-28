@@ -2,9 +2,16 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
+# Copy everything
 COPY . .
-RUN dotnet restore YoutubeCompanion.slnx
-RUN dotnet publish YoutubeCompanion.API -c Release -o out
+
+# Restore ONLY the API project
+RUN dotnet restore YoutubeCompanion.API/YoutubeCompanion.API.csproj
+
+# Publish API
+RUN dotnet publish YoutubeCompanion.API/YoutubeCompanion.API.csproj \
+    -c Release \
+    -o out
 
 # ---------- Runtime stage ----------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
