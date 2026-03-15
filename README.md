@@ -1,96 +1,186 @@
 # YouTube Companion Dashboard
 
-.NET 10 API + React UI that helps manage a single YouTube video (fetch details, update title/description, manage comments), store notes in MongoDB, and generate title suggestions via Groq AI.
+A full-stack tool to manage a single YouTube video — fetch details, update title/description, manage comments, store personal notes, and generate AI-powered title suggestions.
 
-## Architecture overview
-- ASP.NET Core API handles OAuth, YouTube Data API interactions, AI inference, and persistence.
-- React UI is a thin client consuming REST endpoints.
-- OAuth tokens are obtained via Google Web OAuth flow and cached in-memory (development scope).
-- MongoDB Atlas stores notes and event logs.
-- Groq (Llama-3.3-70B) is used via OpenAI-compatible API for AI title suggestions.
+**Live app:** https://youtube-companion-dashboard-five.vercel.app  
+**Backend:** ASP.NET Core (.NET 10) · **Frontend:** React 19 · **Database:** MongoDB Atlas · **AI:** Groq (Llama-3.3-70B)
 
-## Tech stack
-- Backend: .NET 10 (ASP.NET Core)
-- Frontend: React (Create React App)
+---
 
-Quick links
-- App startup: [backend/YoutubeCompanion.API/Program.cs](backend/YoutubeCompanion.API/Program.cs)
-- YouTube OAuth: [`YoutubeCompanion.Infrastructure.YouTube.YouTubeAuthService`](backend/YoutubeCompanion.Infrastructure/YouTube/YouTubeAuthService.cs)
-- Groq AI client: [`YoutubeCompanion.Infrastructure.AI.GroqAiService`](backend/YoutubeCompanion.Infrastructure/AI/GroqAiService.cs)
-- Mongo context: [`YoutubeCompanion.Infrastructure.Mongo.MongoContext`](backend/YoutubeCompanion.Infrastructure/Mongo/MongoContext.cs)
-- Event logger: [`EventLogger`](backend/YoutubeCompanion.Infrastructure/Logging/EventLogger.cs)
-- Frontend entry: [frontend/youtube-companion-ui/src/index.js](frontend/youtube-companion-ui/src/index.js)
-- Frontend main: [frontend/youtube-companion-ui/src/App.js](frontend/youtube-companion-ui/src/App.js)
-- Default config: [backend/YoutubeCompanion.API/appsettings.json](backend/YoutubeCompanion.API/appsettings.json)
+## Features
 
-## Main features / endpointsMain API endpoints
-- Auth: GET /api/auth/login, GET /api/auth/callback — [backend/YoutubeCompanion.API/Controllers/AuthController.cs](backend/YoutubeCompanion.API/Controllers/AuthController.cs)
-- Video: GET /api/video/details, PUT /api/video/update — [backend/YoutubeCompanion.API/Controllers/VideoController.cs](backend/YoutubeCompanion.API/Controllers/VideoController.cs)
-- Comments: POST /api/video/comment, POST /api/video/comment/reply, DELETE /api/video/comment/{id} — [backend/YoutubeCompanion.API/Controllers/VideoController.cs](backend/YoutubeCompanion.API/Controllers/VideoController.cs)
-- AI suggestions: GET /api/ai/suggest-titles — [backend/YoutubeCompanion.API/Controllers/AiController.cs](backend/YoutubeCompanion.API/Controllers/AiController.cs)
-- Notes (Mongo): POST /api/notes, GET /api/notes/search — [backend/YoutubeCompanion.API/Controllers/NotesController.cs](backend/YoutubeCompanion.API/Controllers/NotesController.cs)
+- **Google OAuth 2.0** — secure login with YouTube scope-based access control (`youtube.force-ssl` for write operations)
+- **Video management** — fetch video details, update title and description via YouTube Data API v3
+- **Comment management** — post comments, reply to comments, delete comments
+- **Notes** — store and search personal notes against the video, persisted in MongoDB Atlas
+- **AI title suggestions** — generate 3 alternative video titles using Groq (Llama-3.3-70B) via OpenAI-compatible API
+- **Event logging** — internal event logger for tracking API interactions
+- **Swagger UI** — available in development (or when `ENABLE_SWAGGER=true`)
 
+---
 
-## Important files & symbols
-- App startup: [backend/YoutubeCompanion.API/Program.cs](backend/YoutubeCompanion.API/Program.cs)
-- YouTube OAuth: [`YoutubeCompanion.Infrastructure.YouTube.YouTubeAuthService`](backend/YoutubeCompanion.Infrastructure/YouTube/YouTubeAuthService.cs)
-- Groq AI client: [`YoutubeCompanion.Infrastructure.AI.GroqAiService`](backend/YoutubeCompanion.Infrastructure/AI/GroqAiService.cs)
-- MongoDB context: [`YoutubeCompanion.Infrastructure.Mongo.MongoContext`](backend/YoutubeCompanion.Infrastructure/Mongo/MongoContext.cs)
-- Event logger: [backend/YoutubeCompanion.Infrastructure/Logging/EventLogger.cs](backend/YoutubeCompanion.Infrastructure/Logging/EventLogger.cs)
-- Controllers:
-  - [backend/YoutubeCompanion.API/Controllers/AuthController.cs](backend/YoutubeCompanion.API/Controllers/AuthController.cs)
-  - [backend/YoutubeCompanion.API/Controllers/VideoController.cs](backend/YoutubeCompanion.API/Controllers/VideoController.cs)
-  - [backend/YoutubeCompanion.API/Controllers/AiController.cs](backend/YoutubeCompanion.API/Controllers/AiController.cs)
-  - [backend/YoutubeCompanion.API/Controllers/NotesController.cs](backend/YoutubeCompanion.API/Controllers/NotesController.cs)
-- DTOs: [backend/YoutubeCompanion.Application/DTOs](backend/YoutubeCompanion.Application/DTOs)
-- Frontend: [frontend/youtube-companion-ui/README.md](frontend/youtube-companion-ui/README.md), [frontend/youtube-companion-ui/package.json](frontend/youtube-companion-ui/package.json)
+## Architecture
 
-## Configuration
-- Default app settings: [backend/YoutubeCompanion.API/appsettings.json](backend/YoutubeCompanion.API/appsettings.json)
-  - YouTube keys: YouTube:ClientId, YouTube:ClientSecret, YouTube:RedirectUri, YouTube:VideoId
-  - Mongo: MongoDb:ConnectionString, MongoDb:DatabaseName, MongoDb:NotesCollection
-  - Groq: Groq:ApiKey, Groq:Model
-- Development launch settings: [backend/YoutubeCompanion.API/Properties/launchSettings.json](backend/YoutubeCompanion.API/Properties/launchSettings.json)
-- Keep sensitive values out of source control (use `appsettings.Development.json` or environment variables).
+```
+youtube-companion-dashboard/
+├── backend/
+│   └── YoutubeCompanion.API/           # ASP.NET Core Web API
+│       ├── Controllers/                # Auth, Video, AI, Notes
+│       ├── Properties/
+│       └── appsettings.json
+│   └── YoutubeCompanion.Application/
+│       └── DTOs/                       # Request/response models
+│   └── YoutubeCompanion.Infrastructure/
+│       ├── AI/                         # Groq AI service
+│       ├── Logging/                    # Event logger
+│       ├── Mongo/                      # MongoDB context
+│       ├── Settings/                   # Typed config classes
+│       └── YouTube/                    # OAuth + YouTube API service
+└── frontend/
+    └── youtube-companion-ui/           # React 19 (Create React App)
+        └── src/
+```
 
-### Environment Variables (Production & Remote Deployment)
-Set these environment variables for production or when running without a local `appsettings.Development.json`:
+The backend follows a layered architecture: **Controllers → Application (DTOs) → Infrastructure (services)**. The React frontend is a thin client consuming the REST API.
+
+---
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/auth/login` | Initiate Google OAuth flow |
+| GET | `/api/auth/callback` | OAuth callback handler |
+| GET | `/api/video/details` | Fetch video metadata |
+| PUT | `/api/video/update` | Update video title/description |
+| POST | `/api/video/comment` | Post a comment |
+| POST | `/api/video/comment/reply` | Reply to a comment |
+| DELETE | `/api/video/comment/{id}` | Delete a comment |
+| GET | `/api/ai/suggest-titles` | Get 3 AI-generated title suggestions |
+| POST | `/api/notes` | Save a note |
+| GET | `/api/notes/search` | Search notes |
+| GET | `/api/config-check` | Verify environment config is loaded (non-secret) |
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- [Node.js 18+](https://nodejs.org/)
+- [MongoDB Atlas](https://www.mongodb.com/atlas) account (free tier works)
+- [Google Cloud Console](https://console.cloud.google.com/) project with YouTube Data API v3 enabled
+- [Groq API key](https://console.groq.com/)
+
+---
+
+### 1. Clone the repo
 
 ```bash
-export YOUTUBE_CLIENT_ID="your_youtube_client_id"
-export YOUTUBE_CLIENT_SECRET="your_youtube_client_secret"
-export YOUTUBE_REDIRECT_URI="https://localhost:7009/api/auth/callback"
-export YOUTUBE_VIDEO_ID="your_video_id"
-export MONGODB_CONNECTION_STRING="your_mongodb_connection_string"
-export GROQ_API_KEY="your_groq_api_key"
+git clone https://github.com/poojapadhy/youtube-companion-dashboard.git
+cd youtube-companion-dashboard
 ```
 
-**Windows (PowerShell):**
-```powershell
-$env:YOUTUBE_CLIENT_ID = "your_youtube_client_id"
-$env:YOUTUBE_CLIENT_SECRET = "your_youtube_client_secret"
-$env:YOUTUBE_REDIRECT_URI = "https://localhost:7009/api/auth/callback"
-$env:YOUTUBE_VIDEO_ID = "your_video_id"
-$env:MONGODB_CONNECTION_STRING = "your_mongodb_connection_string"
-$env:GROQ_API_KEY = "your_groq_api_key"
+---
+
+### 2. Configure the backend
+
+Create `backend/YoutubeCompanion.API/appsettings.Development.json` (this file is git-ignored and never committed):
+
+```json
+{
+  "YouTube": {
+    "ClientId": "your_google_client_id",
+    "ClientSecret": "your_google_client_secret",
+    "RedirectUri": "https://localhost:7009/api/auth/callback",
+    "VideoId": "your_youtube_video_id"
+  },
+  "MongoDb": {
+    "ConnectionString": "your_mongodb_atlas_connection_string",
+    "DatabaseName": "youtube_companion_db",
+    "NotesCollection": "notes"
+  },
+  "Groq": {
+    "ApiKey": "your_groq_api_key",
+    "Model": "llama-3.3-70b-versatile"
+  }
+}
 ```
 
-**Development (Local):**
-For local development, use `appsettings.Development.json` (excluded from source control) — the app will automatically use it in Development environment.
+> **How to get these values:**
+> - **YouTube ClientId / ClientSecret** — Create OAuth 2.0 credentials in [Google Cloud Console](https://console.cloud.google.com/apis/credentials). Add `https://localhost:7009/api/auth/callback` as an authorised redirect URI.
+> - **VideoId** — The 11-character ID from any YouTube video URL: `youtube.com/watch?v=VIDEO_ID_HERE`
+> - **MongoDB ConnectionString** — From your Atlas cluster under *Connect → Drivers*
+> - **Groq ApiKey** — From [console.groq.com](https://console.groq.com/)
 
-## Run locally
-- Backend
-  - From backend folder: dotnet run (or open solution [backend/YoutubeCompanion.slnx](backend/YoutubeCompanion.slnx))
-  - Ensure configuration (client secrets, Groq key, Mongo URI) available to the app.
-- Frontend
-  - From frontend/youtube-companion-ui: npm install && npm start
-  - Entry: [frontend/youtube-companion-ui/src/index.js](frontend/youtube-companion-ui/src/index.js)
+---
 
-## Notes / gotchas
-- OAuth write actions (comments, updates) require the `youtube.force-ssl` scope.  
-  The application explicitly requests `YouTubeService.Scope.YoutubeForceSsl`; changing scopes requires re-consent.
-- Credentials are cached in-memory by [`YoutubeCompanion.Infrastructure.YouTube.YouTubeAuthService.CacheCredential`](backend/YoutubeCompanion.Infrastructure/YouTube/YouTubeAuthService.cs) — process restart clears them.
-- Groq AI responses are parsed naively (expects 3 lines); see [`GroqAiService.SuggestTitlesAsync`](backend/YoutubeCompanion.Infrastructure/AI/GroqAiService.cs).
+### 3. Run the backend
 
-## Licence
-Refer to repository LICENSE (not present).
+```bash
+cd backend/YoutubeCompanion.API
+dotnet run
+```
+
+The API starts at `https://localhost:7009`. Swagger UI is available at `https://localhost:7009/swagger`.
+
+---
+
+### 4. Run the frontend
+
+```bash
+cd frontend/youtube-companion-ui
+npm install
+npm start
+```
+
+The React app starts at `http://localhost:3000`.
+
+---
+
+## Production / Deployment
+
+For production deployments (e.g. Render, Railway, Azure), set the following environment variables instead of using `appsettings.Development.json`:
+
+| Environment Variable | Description |
+|---|---|
+| `YouTube__ClientId` | Google OAuth Client ID |
+| `YouTube__ClientSecret` | Google OAuth Client Secret |
+| `YouTube__RedirectUri` | Authorised OAuth redirect URI |
+| `YouTube__VideoId` | Target YouTube video ID |
+| `MongoDb__ConnectionString` | MongoDB Atlas connection string |
+| `Groq__ApiKey` | Groq API key |
+| `ENABLE_SWAGGER` | Set to `true` to expose Swagger in production |
+
+> ASP.NET Core maps double-underscore (`__`) env vars to nested config keys automatically.
+
+---
+
+## Known Limitations & Planned Improvements
+
+| Limitation | Planned Fix |
+|---|---|
+| OAuth tokens cached in-memory — lost on process restart | Persist encrypted tokens to MongoDB |
+| AI title parser expects exactly 3 newline-separated lines | Switch to structured JSON response format from Groq |
+| Hardcoded to manage a single video (configured via `VideoId`) | Allow dynamic video selection via UI |
+| Frontend scaffolded with Create React App (deprecated) | Migrate to Vite |
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | .NET 10, ASP.NET Core |
+| Frontend | React 19, Axios |
+| Database | MongoDB Atlas |
+| Auth | Google OAuth 2.0 (YouTube Data API v3) |
+| AI | Groq API — Llama-3.3-70B |
+| CI/Deploy | Vercel (frontend) |
+
+---
+
+## License
+
+MIT License — Copyright (c) 2026 Pooja Padhy. See [LICENSE](./LICENSE) for details.
