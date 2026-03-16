@@ -172,7 +172,7 @@ For production deployments (e.g. Render, Railway, Azure), set the following envi
 
 | Layer | Technology |
 |---|---|
-| Backend | .NET 10, ASP.NET Core |
+| Backend | .NET 8, ASP.NET Core |
 | Frontend | React 19, Axios |
 | Database | MongoDB Atlas |
 | Auth | Google OAuth 2.0 (YouTube Data API v3) |
