@@ -3,7 +3,7 @@
 A full-stack tool to manage a single YouTube video — fetch details, update title/description, manage comments, store personal notes, and generate AI-powered title suggestions.
 
 **Live app:** https://youtube-companion-dashboard-five.vercel.app  
-**Backend:** ASP.NET Core (.NET 10) · **Frontend:** React 19 · **Database:** MongoDB Atlas · **AI:** Groq (Llama-3.3-70B)
+**Backend:** ASP.NET Core (.NET 8) · **Frontend:** React 19 · **Database:** MongoDB Atlas · **AI:** Groq (Llama-3.3-70B)
 
 ---
 
